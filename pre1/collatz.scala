@@ -10,7 +10,13 @@ object CW6a {
 //    performs the recursion. The function should expect
 //    arguments in the range of 1 to 1 Million.
 
-def collatz(n: Long) : Long = ???
+def collatz(n: Long) : Long = {
+    
+    if (n==1) 0
+    else if( n % 2 == 0) 1 + collatz(n / 2)
+    else 1 + collatz(3 * n + 1)
+    
+}
 
 
 //(2) Complete the collatz_max function below. It should
@@ -22,7 +28,11 @@ def collatz(n: Long) : Long = ???
 //    the maximum number of steps and the second is the 
 //    corresponding number.
 
-def collatz_max(bnd: Long) : (Long, Long) = ???
+def collatz_max(bnd: Long) : (Long, Long) = {
+    val x = List.range(1,bnd)
+    val a = x.foreach(w =>collatz(w))
+    (a.max,a.indexOf(a.max))
+}
 
 //(3) Implement a function that calculates the last_odd
 //    number in a collatz series.  For this implement an
