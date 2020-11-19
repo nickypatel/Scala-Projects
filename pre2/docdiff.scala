@@ -14,7 +14,12 @@ object CW7a {
 //    The words should be Returned as a list of strings.
 
 
-def clean(s: String) : List[String] = ???
+def clean(s: String) : List[String] = {
+
+    val r = "\\w+".r
+    val list = r.findAllIn(s).toList
+    list
+}
   
 
 
@@ -23,7 +28,14 @@ def clean(s: String) : List[String] = ???
 //    be calculated as a Map from strings to integers.
 
 
-def occurrences(xs: List[String]): Map[String, Int] = ???
+def occurrences(xs: List[String]): Map[String, Int] = {
+    val mymap = Map[String,Int]()
+    val distinctlist = xs.distinct
+    val pairs = List[String,Int]()
+    for (w <- distinctlist){
+        val pairs:+ (w,xs.count(x => {x==w}))
+    }
+}
 
 
 //(3) This functions calculates the dot-product of two documents
