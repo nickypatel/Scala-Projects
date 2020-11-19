@@ -28,12 +28,12 @@ def collatz(n: Long) : Long = {
 //    the maximum number of steps and the second is the 
 //    corresponding number.
 
-def collatz_max(bnd: Long) : (Long, Long) = {
+/* def collatz_max(bnd: Long) : (Long, Long) = {
     val x = List.range(1,bnd)
     val a = x.foreach(w =>collatz(w))
     (a.max,a.indexOf(a.max))
 }
-
+ */
 //(3) Implement a function that calculates the last_odd
 //    number in a collatz series.  For this implement an
 //    is_pow_of_two function which tests whether a number 
