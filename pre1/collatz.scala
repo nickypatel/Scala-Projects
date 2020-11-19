@@ -59,11 +59,32 @@ def collatz_result(n:Long) : List[Long] ={
 //    and also assume that the input of last_odd will not 
 //    be a power of 2.
 
-def is_pow_of_two(n: Long) : Boolean = ???
+def is_pow_of_two(n: Long) : Boolean = {
+    if(n %2 != 0)false
+    else {
+        val x = n&(n-1)
+        if(x == 0)true
+        else false
+    }
+ 
+}
 
-def is_hard(n: Long) : Boolean = ???
+def is_hard(n: Long) : Boolean = {
+    if(n%2 ==0) false
+    else{
+    val x = 3*n + 1
+    is_pow_of_two(x)     
+    }
+}
 
-def last_odd(n: Long) : Long = ???
+
+def last_odd(n: Long) : Long = {
+ if (n %2 == 0) last_odd(n/2)
+ else {
+     if(is_hard(n))n
+     else last_odd(3 * n + 1)
+     }
+}
 
 }
 
