@@ -15,7 +15,6 @@ object CW7a {
 
 
 def clean(s: String) : List[String] = {
-
     val r = "\\w+".r
     val list = r.findAllIn(s).toList
     list
@@ -29,14 +28,11 @@ def clean(s: String) : List[String] = {
 
 
 def occurrences(xs: List[String]): Map[String, Int] = {
-    val mymap = Map[String,Int]()
     val distinctlist = xs.distinct
-    val pairs = List[String,Int]()
-    for (w <- distinctlist){
-        val pairs:+ (w,xs.count(x => {x==w}))
-    }
+    val countList = for (e <- distinctlist) yield xs.count(_ == e)
+    val myMap: Map[String,Int] = (distinctlist zip countList).toMap
+    myMap
 }
-
 
 //(3) This functions calculates the dot-product of two documents
 //    (list of strings). For this it calculates the occurrence
@@ -45,7 +41,12 @@ def occurrences(xs: List[String]): Map[String, Int] = {
 //    The function finally sums up all products. 
 
 
-def prod(lst1: List[String], lst2: List[String]) : Int = ???
+def prod(lst1: List[String], lst2: List[String]) : Int ={
+    val lst3 = lst1 ++ lst2
+    val lst4 = lst3.distinct
+    val dot_products = for(e <- lst4) yield lst1.count(_ ==e) * lst2.count(_ == e)
+    dot_products.sum   
+}
 
 
 //(4) Complete the functions overlap and similarity. The overlap of
@@ -54,9 +55,17 @@ def prod(lst1: List[String], lst2: List[String]) : Int = ???
 //    of the cleaned strings (see (1)).  
 
 
-def overlap(lst1: List[String], lst2: List[String]) : Double = ???
+def overlap(lst1: List[String], lst2: List[String]) : Double = {
+    val denominator = List(prod(lst1,lst1),prod(lst2,lst2))
+    val numerator = prod(lst1,lst2).toDouble
+    numerator / denominator.max
+}
 
-def similarity(s1: String, s2: String) : Double = ???
+def similarity(s1: String, s2: String) : Double = {
+    val lst1 = clean(s1)
+    val lst2 = clean(s2)
+    overlap(lst1,lst2)
+}
 
 
 
