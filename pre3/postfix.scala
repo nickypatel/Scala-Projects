@@ -49,7 +49,8 @@ def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = {
  * URL : https://www.packtpub.com/product/fundamental-algorithms-in-scala-integrated-course/9781788474887
  *
  *****************************************************************************************************************
-*/	
+*/
+	
 	val (rpn, st1) = toks.foldLeft((out,st)) { (z,tok) =>
 		val (outp, stk) = z
 		tok match {
