@@ -50,13 +50,13 @@ def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = {
  *
  *****************************************************************************************************************
 */
-	
+
 	val (rpn, st1) = toks.foldLeft((out,st)) { (z,tok) =>
 		val (outp, stk) = z
 		tok match {
 			
 			case "+" =>
-				val (higher,lower) = stk.span(op => "/*+".contains(op))
+				val (higher,lower) = stk.span(op => "/*+-".contains(op))
 				(outp ::: higher, "+" +: lower)
 		
 			case "-" =>
@@ -68,7 +68,7 @@ def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = {
 				(outp ::: higher, "*" +: lower)
 		
 			case "/" =>
-				val (higher,lower) = stk.span(op => "/".contains(op))
+				val (higher,lower) = stk.span(op => "/*".contains(op))
 				(outp ::: higher, "/" +: lower)
 		
 			case "(" => (outp, "(" +: stk)

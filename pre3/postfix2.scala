@@ -41,8 +41,53 @@ val ops = List("+", "-", "*", "/", "^")
 // the power operation, you can make the same assumptions as in 
 // basic version.
 
-def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = ???
+def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = {
+/*****************************************************************************************************************
+ *
+ * Adapted from: Fundamental Algorithms in Scala
+ * Author : James Cutajar
+ * Date : 11 December 2020
+ * URL : https://www.packtpub.com/product/fundamental-algorithms-in-scala-integrated-course/9781788474887
+ *
+ *****************************************************************************************************************
+*/
+	
+	val (rpn, st1) = toks.foldLeft((out,st)) { (z,tok) =>
+		val (outp, stk) = z
+		tok match {
+			
+      case "^" => (outp, "^" +: stk)
 
+			case "+" =>
+				val (higher,lower) = stk.span(op => "^/*+-".contains(op))
+				(outp ::: higher, "+" +: lower)
+		
+			case "-" =>
+				val (higher,lower) = stk.span(op => "^/*+-".contains(op))
+				(outp ::: higher, "-" +: lower)
+			
+			case "*" =>
+				val (higher,lower) = stk.span(op => "^/*".contains(op))
+				(outp ::: higher, "*" +: lower)
+		
+			case "/" =>
+				val (higher,lower) = stk.span(op => "^/*".contains(op))
+				(outp ::: higher, "/" +: lower)
+		
+			case "(" => (outp, "(" +: stk)
+		
+			case ")" =>
+				val (before,rest) = stk.span (op => op != "(" )
+				(outp ::: before, rest.tail)
+			
+			case _ => (outp :+ tok, stk)
+
+		}
+
+	}
+	rpn ::: st1
+
+}
 
 // test cases
 // syard(split("3 + 4 * 8 / ( 5 - 1 ) ^ 2 ^ 3"))  // 3 4 8 * 5 1 - 2 3 ^ ^ / +
@@ -51,8 +96,21 @@ def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = ???
 // (4) Implement a compute function that produces an Int for an
 // input list of tokens in postfix notation.
 
-def compute(toks: Toks, st: List[Int] = Nil) : Int = ???
+def compute(toks: Toks, st: List[Int] = Nil) : Int = {
+	val answer =toks.foldLeft(st){ (stk,tok)=>
+		(stk,tok) match{
+			case (x :: y :: tail, "^") => (y+x) +: tail
+			case (x :: y :: tail, "+") => (y+x) +: tail
+			case (x :: y :: tail, "-") => (y-x) +: tail
+			case (x :: y :: tail, "*") => (y*x) +: tail
+			case (x :: y :: tail, "/") => (y/x) +: tail
+			case (_, x) => x.toInt +: stk
 
+		}
+
+	}
+	answer.head
+}
 
 // test cases
 // compute(syard(split("3 + 4 * ( 2 - 1 )")))   // 7
