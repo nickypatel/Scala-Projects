@@ -99,7 +99,7 @@ def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = {
 def compute(toks: Toks, st: List[Int] = Nil) : Int = {
 	val answer =toks.foldLeft(st){ (stk,tok)=>
 		(stk,tok) match{
-			case (x :: y :: tail, "^") => (y+x) +: tail
+			case (x :: y :: tail, "^") => BigInt(y).pow(x).toInt +: tail
 			case (x :: y :: tail, "+") => (y+x) +: tail
 			case (x :: y :: tail, "-") => (y-x) +: tail
 			case (x :: y :: tail, "*") => (y*x) +: tail
