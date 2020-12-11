@@ -37,11 +37,53 @@ def split(s: String) : Toks = s.split(" ").toList
 // it helpful to implement two auxiliary functions for the pattern matching:  
 // 
 
-def is_op(op: String) : Boolean = ???
-def prec(op1: String, op2: String) : Boolean = ???
+def is_op(op: String) : Boolean = "/+*-".contains(op)
 
 
-def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = ???
+def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = {
+/*****************************************************************************************************************
+ *
+ * Adapted from: Fundamental Algorithms in Scala
+ * Author : James Cutajar
+ * Date : 11 December 2020
+ * URL : https://www.packtpub.com/product/fundamental-algorithms-in-scala-integrated-course/9781788474887
+ *
+ *****************************************************************************************************************
+*/	
+	val (rpn, st1) = toks.foldLeft((out,st)) { (z,tok) =>
+		val (outp, stk) = z
+		tok match {
+			
+			case "+" =>
+				val (higher,lower) = stk.span(op => "/*+".contains(op))
+				(outp ::: higher, "+" +: lower)
+		
+			case "-" =>
+				val (higher,lower) = stk.span(op => "/*+-".contains(op))
+				(outp ::: higher, "-" +: lower)
+			
+			case "*" =>
+				val (higher,lower) = stk.span(op => "/*".contains(op))
+				(outp ::: higher, "*" +: lower)
+		
+			case "/" =>
+				val (higher,lower) = stk.span(op => "/".contains(op))
+				(outp ::: higher, "/" +: lower)
+		
+			case "(" => (outp, "(" +: stk)
+		
+			case ")" =>
+				val (before,rest) = stk.span (op => op != "(" )
+				(outp ::: before, rest.tail)
+			
+			case _ => (outp :+ tok, stk)
+
+		}
+
+	}
+	rpn ::: st1
+
+}
 
 
 // test cases
@@ -65,7 +107,20 @@ def syard(toks: Toks, st: Toks = Nil, out: Toks = Nil) : Toks = ???
 // this function will be only called with proper postfix 
 // expressions.    
 
-def compute(toks: Toks, st: List[Int] = Nil) : Int = ???
+def compute(toks: Toks, st: List[Int] = Nil) : Int = {
+	val answer =toks.foldLeft(st){ (stk,tok)=>
+		(stk,tok) match{
+			case (x :: y :: tail, "+") => (y+x) +: tail
+			case (x :: y :: tail, "-") => (y-x) +: tail
+			case (x :: y :: tail, "*") => (y*x) +: tail
+			case (x :: y :: tail, "/") => (y/x) +: tail
+			case (_, x) => x.toInt +: stk
+
+		}
+
+	}
+	answer.head
+}
 
 
 // test cases
