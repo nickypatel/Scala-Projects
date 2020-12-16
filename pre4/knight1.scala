@@ -17,7 +17,11 @@ type Path = List[Pos]    // a path...a list of positions
 //(1) Complete the function that tests whether the position x
 //    is inside the board and not yet element in the path.
 
-def is_legal(dim: Int, path: Path, x: Pos) : Boolean = ???
+def is_legal(dim: Int, path: Path, x: Pos) : Boolean = {
+  if (x._1 <= dim && x._2 <= dim)
+    !path.contains(x) 
+  else false
+}
 
 
 
