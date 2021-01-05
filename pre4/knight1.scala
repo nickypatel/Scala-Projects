@@ -18,7 +18,7 @@ type Path = List[Pos]    // a path...a list of positions
 //    is inside the board and not yet element in the path.
 
 def is_legal(dim: Int, path: Path, x: Pos) : Boolean = {
-  if (x._1 <= dim && x._2 <= dim)
+  if (x._1 < dim && x._2 < dim && x._1 >= 0 && x._2 >=0)
     !path.contains(x) 
   else false
 }
@@ -29,13 +29,21 @@ def is_legal(dim: Int, path: Path, x: Pos) : Boolean = {
 //    all legal onward moves that are not already in the path. 
 //    The moves should be ordered in a "clockwise" manner.
  
-def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = ???
+def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
+  // hard code all the 8 moves a knight has, using the previous function to 
+  // check that the move can be done.
+  val a = List(2, 1, -1, -2, -2, -1, 1, 2)
+  val b = List(1, 2, 2, 1, -1, -2, -2, -1)
+  val all_moves = for(n <- 0 to 7) yield ( x._1+b(n), x._2+a(n) )
+  val filtered = all_moves.filter(is_legal(dim,path,_))
+  filtered.toList 
+}
 
 
 //some testcases
 //
 //assert(legal_moves(8, Nil, (2,2)) == 
-//  List((3,4), (4,3), (4,1), (3,0), (1,0), (0,1), (0,3), (1,4)))
+//List((3,4), (4,3), (4,1), (3,0), (1,0), (0,1), (0,3), (1,4)))
 //assert(legal_moves(8, Nil, (7,7)) == List((6,5), (5,6)))
 //assert(legal_moves(8, List((4,1), (1,0)), (2,2)) == 
 //  List((3,4), (4,3), (3,0), (0,1), (0,3), (1,4)))
@@ -47,9 +55,22 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = ???
 //    given path. The first function counts all possible tours, 
 //    and the second collects all tours in a list of paths.
 
-def count_tours(dim: Int, path: Path) : Int = ???
+def count_tours(dim: Int, path: Path) : Int = {
+  if(path.length == dim*dim )1
+  else {
+    (for (move <- legal_moves(dim, path, path.head)) yield count_tours(dim, move :: path) ).sum
+  }
+}
 
-def enum_tours(dim: Int, path: Path) : List[Path] = ???
+def enum_tours(dim: Int, path: Path) : List[Path] = {
+  if(path.length == dim*dim ) {
+    List(path)
+  }
+  else {
+    val tours = for (move <- legal_moves(dim, path, path.head)) yield enum_tours(dim, move :: path)
+    tours.flatten
+  }  
+}
 
 
 //(4) Implement a first-function that finds the first 
