@@ -47,8 +47,8 @@ def get_first_price(symbol: String, year: Int) : Option[Double] = {
 
 
 def get_prices(portfolio: List[String], years: Range) : List[List[Option[Double]]] = {
-  val multipleSymbol = for (year <- years; symbol <- portfolio) yield get_first_price(symbol, year)
-  multipleSymbol.toList.sliding(portfolio.length, portfolio.length).toList 
+  val first_prices = for (year <- years; symbol <- portfolio) yield get_first_price(symbol, year)
+  first_prices.toList.sliding(portfolio.length, portfolio.length).toList 
 }    
 
 
