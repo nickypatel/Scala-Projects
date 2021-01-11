@@ -18,8 +18,14 @@ val rstate_portfolio = List("PLD", "PSA", "AMT", "AIV", "AVB", "BXP", "CCI",
 import io.Source
 import scala.util._
 
-def get_january_data(symbol: String, year: Int) : List[String] = ???
-
+def get_january_data(symbol: String, year: Int) : List[String] = {
+  val portfolio = symbol + ".csv"
+  val bufferedSource = Source.fromFile("./" + portfolio)
+  val strings = bufferedSource.getLines.toList
+  val data = strings.filter(_.startsWith(year.toString))
+  bufferedSource.close
+  data    
+}
 
 // (2) From the output of the get_january_data function, the next function 
 //     should extract the first line (if it exists) and the corresponding
@@ -28,7 +34,10 @@ def get_january_data(symbol: String, year: Int) : List[String] = ???
 //     there is a price.
 
 
-def get_first_price(symbol: String, year: Int) : Option[Double] = ???
+def get_first_price(symbol: String, year: Int) : Option[Double] = {
+  val january_data = get_january_data(symbol, year)
+  Try(Some(january_data(0).split(",")(1).toDouble)).getOrElse(None)   
+}
 
 
 // (3) Complete the function below that obtains all first prices
@@ -37,14 +46,20 @@ def get_first_price(symbol: String, year: Int) : Option[Double] = ???
 //     stock symbols and the outer list for the years.
 
 
-def get_prices(portfolio: List[String], years: Range) : List[List[Option[Double]]] = ???
+def get_prices(portfolio: List[String], years: Range) : List[List[Option[Double]]] = {
+  val multipleSymbol = for (year <- years; symbol <- portfolio) yield get_first_price(symbol, year)
+  multipleSymbol.toList.sliding(portfolio.length, portfolio.length).toList 
+}    
+
 
 
 
 // (4) The function below calculates the change factor (delta) between
 //     a price in year n and a price in year n + 1. 
 
-def get_delta(price_old: Option[Double], price_new: Option[Double]) : Option[Double] = ???
+def get_delta(price_old: Option[Double], price_new: Option[Double]) : Option[Double] = {
+  Try(Some((price_new.get - price_old.get) / price_old.get)).getOrElse(None)
+}
 
 
 
@@ -52,7 +67,11 @@ def get_delta(price_old: Option[Double], price_new: Option[Double]) : Option[Dou
 //     portfolio). The input to this function are the nested lists created by 
 //     get_prices above.
 
-def get_deltas(data: List[List[Option[Double]]]) :  List[List[Option[Double]]] = ???
+def get_deltas(data: List[List[Option[Double]]]) :  List[List[Option[Double]]] = {
+ val q = for (n <- 0 to data.length - 2; m <- 0 to data(0).length - 1) yield get_delta(data(n)(m), data(n + 1)(m))
+  q.toList.sliding(data(0).length, data(0).length).toList
+}
+
 
 
 
@@ -60,7 +79,17 @@ def get_deltas(data: List[List[Option[Double]]]) :  List[List[Option[Double]]] =
 //     calculates the yearly yield, i.e. new balance, according to our dumb investment 
 //     strategy. Index points to a year in the data list.
 
-def yearly_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : Long = ???
+def yearly_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : Long = {
+  val yearYield = data(index).flatten
+  if(yearYield.length == 0){ 
+    balance
+    }
+  else {
+    val perStock = balance.toDouble / yearYield.length.toDouble
+    val profit = (for (delta <- yearYield) yield perStock * delta).sum
+    balance + profit.toLong
+  }    
+}
 
 
 // (7) Write a function compound_yield that calculates the overall balance for a 
@@ -69,11 +98,21 @@ def yearly_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : 
 //     results generated under (6). The function investment calls compound_yield
 //     with the appropriate deltas and the first index.
 
-def compound_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : Long = ???
+def compound_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : Long = {
+  if(index <= data.length - 1 ) {
+    val invest = yearly_yield(data, balance,index)
+    compound_yield(data, invest, index +1)
+  }
+  else {
+    balance
+  }
+}
 
-def investment(portfolio: List[String], years: Range, start_balance: Long) : Long = ???
-
-
+def investment(portfolio: List[String], years: Range, start_balance: Long) : Long = {
+  val price = get_prices(portfolio, years)
+  val deltas = get_deltas(price)
+  compound_yield(deltas, start_balance, 0)    
+}
 
 
 //Test cases for the two portfolios given above
