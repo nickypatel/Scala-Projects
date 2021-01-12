@@ -43,9 +43,20 @@ val movies_url = """https://nms.kcl.ac.uk/christian.urban/movies.csv"""
 //     the argument lines, will be the output of the function get_csv_url.
 
 
-def process_ratings(lines: List[String]) : List[(String, String)] = ???
+def process_ratings(lines: List[String]) : List[(String, String)] = {
+    val data = for(x <- lines) 
+    yield x.split(",").toList
+    val above_four = data.filter(_(2).toInt > 3)
+    val pairs = above_four.map(x => (x(0),x(1)))
+    pairs
+}
 
-def process_movies(lines: List[String]) : List[(String, String)] = ???
+def process_movies(lines: List[String]) : List[(String, String)] = {
+    val data = for(x <- lines) 
+    yield x.split(",").toList
+    val pairs = data.map( x => (x(0),x(1)))
+    pairs
+}
 
 
 // testcases
