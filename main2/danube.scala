@@ -107,7 +107,13 @@ def groupById(ratings: List[(String, String)],
 //     otherwise it might happen we recommend the same movie).
 
 
-def favourites(m: Map[String, List[String]], mov: String) : List[List[String]] = ???
+def favourites(m: Map[String, List[String]], mov: String) : List[List[String]] = {
+    val movie_recs = for ((k,v) <- m 
+        if (v.contains(mov))) 
+        yield v
+
+    (for(x <- movie_recs) yield x.filter(_ != mov)).toList
+}
 
 
 // testcases
@@ -129,7 +135,12 @@ def favourites(m: Map[String, List[String]], mov: String) : List[List[String]] =
 //     movies sorted according to the most frequently suggested movie(s) first.
 
 def suggestions(recs: Map[String, List[String]], 
-                mov_name: String) : List[String] = ???
+                mov_name: String) : List[String] = {
+                    val data = favourites(recs,mov_name).flatten
+                    val suggestions_map = data.groupBy(identity).mapValues(_.size)
+                    val sorted_suggestions = List(suggestions_map.toSeq.sortWith(_._2 > _._2):_*)
+                    (for (x <- sorted_suggestions) yield x._1).toList
+                }
 
 
 // testcases
