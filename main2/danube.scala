@@ -160,9 +160,14 @@ def suggestions(recs: Map[String, List[String]],
 
 def recommendations(recs: Map[String, List[String]],
                     movs: Map[String, String],
-                    mov_name: String) : List[String] = ???
-
-
+                    mov_name: String) : List[String] = {
+                        val suggestions_list = suggestions(recs,mov_name)
+                        val two_suggestions = {
+                            if (suggestions_list.size >= 2)suggestions_list.take(2)
+                            else Try(suggestions_list.take(1)).getOrElse(Nil)
+                        }
+                        for (x <- two_suggestions) yield movs(x)
+                    }
 
 // testcases
 //-----------
@@ -199,7 +204,12 @@ def recommendations(recs: Map[String, List[String]],
 // first).
 
 def most_recommended(recs: Map[String, List[String]],
-                     movs: Map[String, String]) : List[(String, Int)] = ???
+                     movs: Map[String, String]) : List[(String, Int)] = {
+                         val movie_ids = movs.keys.toList
+                         val all_recs = (for (x <- movie_ids) yield recommendations(recs,movs,x)).toList.flatten
+                         val recs_map = all_recs.groupBy(identity).mapValues(_.size)
+                        List(recs_map.toSeq.sortWith(_._2 > _._2):_*)
+                     }
 
 
 // testcase
