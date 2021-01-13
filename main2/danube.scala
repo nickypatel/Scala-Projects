@@ -18,7 +18,7 @@ import scala.util._
 //     in the file).
 
 def get_csv_url(url: String) : List[String] = {
-    val file = Try(Source.fromURL(url).getLines().toList.tail).getOrElse(List[String]())
+    val file = Try(Source.fromURL(url)("UTF-8").getLines().toList.tail).getOrElse(List[String]())
     file
 }
 
