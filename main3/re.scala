@@ -50,7 +50,7 @@ def nullable (r: Rexp) : Boolean = {
   case ONE => true
   case CHAR(c) => false
   case ALT(r1,r2) => nullable(r1) || nullable(r2)
-  case SEQ(r1, r2) => nullable(r1) && nullable(r2)
+  case SEQ(r1,r2) => nullable(r1) && nullable(r2)
   case STAR(r) => true
 }
 
@@ -65,8 +65,8 @@ def der (c: Char, r: Rexp) : Rexp = {
   case ONE => ZERO
   case CHAR(d) => if (c == d) ONE else ZERO
   case ALT(r1,r2) => ALT( der(c, r1), der(c, r2) )
-  case SEQ(r1, r2) => if (nullable(r1)) { ALT( SEQ( der(c, r1), r2), der(c, r2) ) } else SEQ(der(c,r1), r2)
-  case STAR(r) => SEQ( der(c,r), STAR(r) ) 
+  case SEQ(r1,r2) => if (nullable(r1)) { ALT (SEQ(der(c,r1),r2),der(c,r2)) } else SEQ(der(c,r1),r2)
+  case STAR(r) => SEQ(der(c,r),STAR(r)) 
 }
 
 
@@ -79,17 +79,17 @@ def der (c: Char, r: Rexp) : Rexp = {
 
 def simp(r: Rexp) : Rexp = {
   
-  case SEQ(r1, r2) => (simp(r1), simp(r2)) match {
+  case SEQ(r1,r2) => (simp(r1),simp(r2)) match {
     case (r1,ZERO) => ZERO
     case (ZERO,r2) => ZERO
     case (r1,ONE) => r1
     case (ONE,r2) => r2
-    case (r1,r2) => SEQ(r1, r2)
+    case (r1,r2) => SEQ(r1,r2)
   }
-  case ALT(r1,r2)  => (simp(r1), simp(r2)) match {
-    case(r1,ZERO) => r1
+  case ALT(r1,r2) => (simp(r1),simp(r2)) match {
+    case (r1,ZERO) => r1
     case (ZERO,r2) => r2
-    case (r1,r2) => if(r1 == r2) r1
+    case (r1,r2) => if(r1 == r2)r1
     else ALT(r1,r2)
   }
   case _ => r
@@ -100,7 +100,7 @@ def simp(r: Rexp) : Rexp = {
 // expression and a string and checks whether the
 // string matches the regular expression
 
-def ders (s: List[Char], r: Rexp) : Rexp = s match{
+def ders(s: List[Char], r: Rexp) : Rexp = s match {
   case Nil => r
   case c::cs => ders(cs,simp(der(c, simp(r))))
 }
@@ -118,7 +118,7 @@ def size(r: Rexp): Int = r match {
   case ZERO => 1
   case ONE => 1
   case CHAR(c) => 1
-  case ALT(r1, r2) => 1 + size(r1) + size(r2)
+  case ALT(r1,r2) => 1 + size(r1) + size(r2)
   case SEQ(r1,r2) => 1 + size(r1) + size(r2)
   case STAR(r) => 1 + size(r)
 }
