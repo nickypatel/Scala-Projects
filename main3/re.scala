@@ -45,13 +45,14 @@ implicit def stringOps (s: String) = new {
 // can match the empty string and Returns a boolean
 // accordingly.
 
-def nullable (r: Rexp) : Boolean = {
+def nullable(r: Rexp) : Boolean = r match{
   case ZERO => false
   case ONE => true
   case CHAR(c) => false
   case ALT(r1,r2) => nullable(r1) || nullable(r2)
   case SEQ(r1,r2) => nullable(r1) && nullable(r2)
   case STAR(r) => true
+  
 }
 
 
@@ -60,7 +61,7 @@ def nullable (r: Rexp) : Boolean = {
 // function calculates the derivative of a 
 // regular expression w.r.t. a character.
 
-def der (c: Char, r: Rexp) : Rexp = {
+def der (c: Char, r: Rexp) : Rexp = r match{
   case ZERO => ZERO
   case ONE => ZERO
   case CHAR(d) => if (c == d) ONE else ZERO
@@ -77,7 +78,7 @@ def der (c: Char, r: Rexp) : Rexp = {
 // expressions; however it does not simplify inside 
 // STAR-regular expressions.
 
-def simp(r: Rexp) : Rexp = {
+def simp(r: Rexp) : Rexp =r match {
   
   case SEQ(r1,r2) => (simp(r1),simp(r2)) match {
     case (r1,ZERO) => ZERO
