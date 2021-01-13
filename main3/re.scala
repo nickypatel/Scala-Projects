@@ -45,7 +45,14 @@ implicit def stringOps (s: String) = new {
 // can match the empty string and Returns a boolean
 // accordingly.
 
-def nullable (r: Rexp) : Boolean = ???
+def nullable (r: Rexp) : Boolean = {
+  case ZERO => false
+  case ONE => true
+  case CHAR(c) => false
+  case ALT(r1,r2) => nullable(r1) || nullable(r2)
+  case SEQ(r1, r2) => nullable(r1) && nullable(r2)
+  case STAR(r) => true
+}
 
 
 // (2) Complete the function der according to
@@ -53,7 +60,14 @@ def nullable (r: Rexp) : Boolean = ???
 // function calculates the derivative of a 
 // regular expression w.r.t. a character.
 
-def der (c: Char, r: Rexp) : Rexp = ???
+def der (c: Char, r: Rexp) : Rexp = {
+  case ZERO => ZERO
+  case ONE => ZERO
+  case CHAR(d) => if (c == d) ONE else ZERO
+  case ALT(r1,r2) => ALT( der(c, r1), der(c, r2) )
+  case SEQ(r1, r2) => if (nullable(r1)) { ALT( SEQ( der(c, r1), r2), der(c, r2) ) } else SEQ(der(c,r1), r2)
+  case STAR(r) => SEQ( der(c,r), STAR(r) ) 
+}
 
 
 // (3) Complete the simp function according to
@@ -63,26 +77,51 @@ def der (c: Char, r: Rexp) : Rexp = ???
 // expressions; however it does not simplify inside 
 // STAR-regular expressions.
 
-def simp(r: Rexp) : Rexp = ???
-
-
+def simp(r: Rexp) : Rexp = {
+  
+  case SEQ(r1, r2) => (simp(r1), simp(r2)) match {
+    case (r1,ZERO) => ZERO
+    case (ZERO,r2) => ZERO
+    case (r1,ONE) => r1
+    case (ONE,r2) => r2
+    case (r1,r2) => SEQ(r1, r2)
+  }
+  case ALT(r1,r2)  => (simp(r1), simp(r2)) match {
+    case(r1,ZERO) => r1
+    case (ZERO,r2) => r2
+    case (r1,r2) => if(r1 == r2) r1
+    else ALT(r1,r2)
+  }
+  case _ => r
+}
 // (4) Complete the two functions below; the first 
 // calculates the derivative w.r.t. a string; the second
 // is the regular expression matcher taking a regular
 // expression and a string and checks whether the
 // string matches the regular expression
 
-def ders (s: List[Char], r: Rexp) : Rexp = ???
+def ders (s: List[Char], r: Rexp) : Rexp = s match{
+  case Nil => r
+  case c::cs => ders(cs,simp(der(c, simp(r))))
+}
 
-def matcher(r: Rexp, s: String): Boolean = ???
+def matcher(r: Rexp, s: String): Boolean = {
+  nullable(ders(s.toList,simp(r)))
+}
 
 
 // (5) Complete the size function for regular
 // expressions according to the specification 
 // given in the coursework.
 
-def size(r: Rexp): Int = ???
-
+def size(r: Rexp): Int = r match {
+  case ZERO => 1
+  case ONE => 1
+  case CHAR(c) => 1
+  case ALT(r1, r2) => 1 + size(r1) + size(r2)
+  case SEQ(r1,r2) => 1 + size(r1) + size(r2)
+  case STAR(r) => 1 + size(r)
+}
 
 // some testing data
 
