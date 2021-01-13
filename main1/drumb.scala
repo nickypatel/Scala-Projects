@@ -20,10 +20,10 @@ import scala.util._
 
 def get_january_data(symbol: String, year: Int) : List[String] = {
   val portfolio = symbol + ".csv"
-  val buffered = Source.fromFile("./" + portfolio)
-  val lines = buffered.getLines().toList
-  val data = lines.filter(_.startsWith(year.toString))
-  buffered.close
+  val bufferedsrc = Source.fromFile("./" + portfolio)
+  val plines = bufferedsrc.getLines().toList
+  val data = plines.filter(_.startsWith(year.toString))
+  bufferedsrc.close
   data    
 }
 
@@ -81,11 +81,11 @@ def get_deltas(data: List[List[Option[Double]]]) :  List[List[Option[Double]]] =
 //     strategy. Index points to a year in the data list.
 
 def yearly_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : Long = {
-  val yyield = data(index).flatten
-  if(yyield.isEmpty)balance
+  val yyield = data( index).flatten
+  if(yyield.size ==0)balance
   else {
     val stock_profits = balance.toDouble / yyield.length.toDouble
-    val total = (for (delta <- yyield) yield delta* stock_profits).sum
+    val total = (for (delta <- yyield) yield delta * stock_profits).sum
     val result = balance + total.toLong
     result
   }    
@@ -99,7 +99,7 @@ def yearly_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : 
 //     with the appropriate deltas and the first index.
 
 def compound_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : Long = {
-  if(index < data.length - 2 ) {
+  if(index <= data.length - 1 ) {
     val yearly = yearly_yield(data, balance,index)
     compound_yield(data, yearly, index + 1)
   }
