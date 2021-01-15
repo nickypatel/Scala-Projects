@@ -40,7 +40,10 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
   case Nil => None
-  case x::xs => if (f(x).isDefined)f(x) else first(xs,f)
+  case x::tail => {
+    if (f(x).isDefined)f(x) 
+    else first(tail,f)
+  }
 }
 
 def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {

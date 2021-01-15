@@ -80,7 +80,10 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
   case Nil => None
-  case x::xs => if (f(x).isDefined)f(x) else first(xs,f)
+  case x::tail => {
+    if (f(x).isDefined)f(x) 
+    else first(tail,f)
+  }
 }
 
 // testcases

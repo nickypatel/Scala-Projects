@@ -31,11 +31,14 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
   filtered.toList 
 }
 
+
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
   case Nil => None
-  case x::xs => if (f(x).isDefined)f(x) else first(xs,f)
+  case x::tail => {
+    if (f(x).isDefined)f(x) 
+    else first(tail,f)
+  }
 }
-
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 
 //    rule. That means moves with the fewest legal onward moves 
