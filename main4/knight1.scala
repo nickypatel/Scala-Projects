@@ -87,15 +87,8 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
     else first(xs.tail,f)
   }
 
-}
+}  
 
-/* def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
-  case Nil => None
-  case x::tail => {
-    if (f(x).isDefined)f(x) 
-    else first(tail,f)
-  }
-} */
 
 
 // testcases
