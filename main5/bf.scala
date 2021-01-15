@@ -114,6 +114,9 @@ def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
             if (sread(mem, mp) != 0) compute(prog, jumpLeft(prog, pc - 1, 0), mp, mem) 
             else compute(prog, pc + 1, mp, mem)
         }
+        case '*' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp) * sread(mem,mp-1)))
+        case '@' => compute(prog, pc + 1, mp, write(mem, mem(mp), sread(mem,mp-1) ))
+        case '#' => print(sread(mem, mp)); compute(prog, pc + 1, mp, mem)
         case _ => compute(prog, pc + 1, mp, mem)
   }
 }
