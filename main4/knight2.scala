@@ -36,11 +36,11 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
   if(xs == Nil) None
   else{
     val head = f(xs.head)
-    if (head.isDefined) f(head)
+    if (head.isDefined) head
     else first(xs.tail,f)
   }
 
-}
+}  
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 
 //    rule. That means moves with the fewest legal onward moves 

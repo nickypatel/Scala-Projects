@@ -42,11 +42,11 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
   if(xs == Nil) None
   else{
     val head = f(xs.head)
-    if (head.isDefined) f(head)
+    if (head.isDefined) head
     else first(xs.tail,f)
   }
 
-}
+}  
 
 def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
     val legal_moves_ordered = legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).size)
