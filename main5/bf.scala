@@ -19,7 +19,9 @@ type Mem = Map[Int, Int]
 import io.Source
 import scala.util._
 
-def load_bff(name: String) : String = ???
+def load_bff(name: String) : String = {
+    Try(Source.fromFile(name).mkString).getOrElse("")
+}
 
 
 
@@ -32,9 +34,13 @@ def load_bff(name: String) : String = ???
 // value v is stored.
 
 
-def sread(mem: Mem, mp: Int) : Int = ???
+def sread(mem: Mem, mp: Int) : Int = {
+    mem.getOrElse(mp,0)
+}
 
-def write(mem: Mem, mp: Int, v: Int) : Mem = ???
+def write(mem: Mem, mp: Int, v: Int) : Mem = {
+    mem.updated(mp, v)
+}
 
 
 
