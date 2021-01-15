@@ -58,9 +58,9 @@ def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 
 
 def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-    if(path.size == dim*dim && legal_moves(dim, path, path.head).contains(path.last)) Some(path)
+    if(path.length == dim*dim && legal_moves(dim, List(path.head), path.head).contains(path.last)) Some(path)
     else{
-        first (ordered_moves(dim,path,path.head), (f: (Int,Int)) => first_closed_tour_heuristics(dim, f::path))
+        first(ordered_moves(dim,path,path.head), (f: (Int,Int)) => first_closed_tour_heuristics(dim, f::path))
     }
 }
 
