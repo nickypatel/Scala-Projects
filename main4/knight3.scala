@@ -41,7 +41,8 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
   if(xs == Nil) None
   else{
-    if (f(xs.head).isDefined) f(xs.head)
+    val head = f(xs.head)
+    if (head.isDefined) f(head)
     else first(xs.tail,f)
   }
 

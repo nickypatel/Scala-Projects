@@ -67,7 +67,8 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
     List(path)
   }
   else {
-    val tours = for (move <- legal_moves(dim, path, path.head)) yield enum_tours(dim, move :: path)
+    val tours = for (move <- legal_moves(dim, path, path.head)) 
+                yield enum_tours(dim, move :: path)
     tours.flatten
   }  
 }
@@ -81,7 +82,8 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
   if(xs == Nil) None
   else{
-    if (f(xs.head).isDefined) f(xs.head)
+    val head = f(xs.head)
+    if (head.isDefined) f(head)
     else first(xs.tail,f)
   }
 
@@ -110,7 +112,9 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
 
 def first_tour(dim: Int, path: Path) : Option[Path] = {
   if (path.size == dim*dim)Some(path)
-  else first (legal_moves(dim,path,path.head), (f: (Int,Int)) => first_tour(dim, f:: path))
+  else {
+    val legal = legal_moves(dim,path,path.head)
+    first (legal, (f: (Int,Int)) => first_tour(dim, f:: path))
 }
 
 /* Helper functions
