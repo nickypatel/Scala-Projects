@@ -109,6 +109,7 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
     val legal = legal_moves(dim,path,path.head)
     first (legal, (f: (Int,Int)) => first_tour(dim, f:: path))
 }
+}
 
 /* Helper functions
 
