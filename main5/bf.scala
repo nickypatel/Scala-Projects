@@ -51,10 +51,25 @@ def write(mem: Mem, mp: Int, v: Int) : Mem = {
 // jumpLeft implements the move to the left to just after
 // the *matching* [-command.
 
-def jumpRight(prog: String, pc: Int, level: Int) : Int = ???
+def jumpRight(prog: String, pc: Int, level: Int) : Int = {
 
-def jumpLeft(prog: String, pc: Int, level: Int) : Int = ???
+    if( (pc > prog.length - 2) || (prog(pc) == ']' && level == 0))pc+1
+    else if (level != 0 && prog(pc) == ']') jumpRight(prog, pc + 1, level - 1)
+    else if (prog(pc) == '[') jumpRight(prog, pc + 1, level + 1)
+    else jumpRight(prog, pc + 1, level)
 
+}
+
+
+def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
+    
+    if(level == 0 && prog(pc) == '[') pc + 1
+    else if(level != 0 && pc == 0) - 1
+    else if(level != 0 && prog(pc) == '[') jumpLeft(prog, pc - 1, level - 1)
+    else if(prog(pc) == ']') jumpLeft(prog, pc - 1, level + 1)
+    else jumpLeft(prog, pc - 1, level)
+
+}
 
 // testcases
 //jumpRight("""--[..+>--],>,++""", 3, 0)         // => 10
@@ -82,11 +97,30 @@ def jumpLeft(prog: String, pc: Int, level: Int) : Int = ???
 // counter and memory counter set to 0.
 
 
-def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = ???
+def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
+    if (pc > prog.length() - 1) mem
+    else prog.charAt(pc) match {
+        case '>' => compute(prog, pc + 1, mp + 1, mem)
+        case '<' => compute(prog, pc + 1, mp - 1, mem)
+        case '+' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp) + 1))
+        case '-' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp) - 1))
+        case '.' => print(sread(mem, mp).toChar); compute(prog, pc + 1, mp, mem)
+        case ',' => compute(prog, pc + 1, mp, mem + (mp -> Console.in.read().toByte))
+        case '[' => {
+            if (sread(mem, mp) == 0) compute(prog, jumpRight(prog, pc + 1, 0), mp, mem) 
+            else compute(prog, pc + 1, mp, mem)
+        }
+        case ']' => {
+            if (sread(mem, mp) != 0) compute(prog, jumpLeft(prog, pc - 1, 0), mp, mem) 
+            else compute(prog, pc + 1, mp, mem)
+        }
+        case _ => compute(prog, pc + 1, mp, mem)
+  }
+}
 
-def run(prog: String, m: Mem = Map()) = ???
-
-
+def run(prog: String, m: Mem = Map()) = {
+    compute(prog,0,0,m)
+}
 
 // some sample bf/bf++-programs collected from the Internet
 //==========================================================
@@ -123,8 +157,7 @@ def run(prog: String, m: Mem = Map()) = ???
 //-----------------------------
 
 // hello world program 1
-//run("""++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++
-//       ..+++.>>.<-.<.+++.------.--------.>>+.>++.""")
+//run("""++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.""")
 
 // hello world program 2
 //run("""++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>+
