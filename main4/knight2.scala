@@ -32,12 +32,13 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 }
 
 
-def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
-  case Nil => None
-  case x::tail => {
-    if (f(x).isDefined)f(x) 
-    else first(tail,f)
+def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
+  if(xs == Nil) None
+  else{
+    if (f(xs.head).isDefined) f(xs.head)
+    else first(xs.tail,f)
   }
+
 }
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 
