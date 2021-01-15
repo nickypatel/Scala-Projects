@@ -53,17 +53,28 @@ def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
     legal_moves_ordered
 }
 
-@tailrec
-def tour_on_mega_board(dim: Int, path: Path) : Option[Path] = List(path) match {
+
+def tour_on_mega_board(dim: Int, path: Path) : Option[Path] = {
+  val paths = List(path)
+
+  @tailrec
+  def aux_tour_on_mega_board(dim:Int, path_list:List[Path]) : Option[Path] = path_list match {
+
     case Nil => None
     
     case x::xs => {
         if (x.size == dim * dim) Some(x)
         else {
             val ordered = ordered_moves (dim,x, x.head)
-            tour_on_mega_board(dim, (for (s <- ordered ) yield s::x).flatten )
+            val rec_path = for (s <- ordered) yield s::x
+            aux_tour_on_mega_board(dim, rec_path)
         }
     }
+  }
+  
+  val result = aux_tour_on_mega_board(dim,paths)
+  result
 }
+
 
 }
