@@ -78,8 +78,10 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 //    In that case Return f(x), otherwise None. If possible,
 //    calculate f(x) only once.
 
-def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = ???
-
+def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
+  case Nil => None
+  case x::xs => if (f(x).isDefined)f(x) else first(xs,f)
+}
 
 // testcases
 //
@@ -93,9 +95,10 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = ???
 //    trying out onward moves, and searches recursively for a
 //    knight tour on a dim * dim-board.
 
-def first_tour(dim: Int, path: Path) : Option[Path] = ???
- 
-
+def first_tour(dim: Int, path: Path) : Option[Path] = {
+  if (path.size == dim*dim)Some(path)
+  else first (legal_moves(dim,path,path.head), (f: (Int,Int)) => first_tour(dim, f:: path))
+}
 
 /* Helper functions
 
