@@ -67,8 +67,7 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
     List(path)
   }
   else {
-    val tours = for (move <- legal_moves(dim, path, path.head)) 
-                yield enum_tours(dim, move :: path)
+    val tours = for (move <- legal_moves(dim, path, path.head)) yield enum_tours(dim, move :: path)
     tours.flatten
   }  
 }
@@ -79,7 +78,6 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 //    In that case Return f(x), otherwise None. If possible,
 //    calculate f(x) only once.
 
-
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
   if(xs == Nil) None
   else{
@@ -88,8 +86,7 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
     else first(xs.tail,f)
   }
 
-}  
-
+}
 
 // testcases
 //
@@ -108,9 +105,8 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
   else {
     val legal = legal_moves(dim,path,path.head)
     first (legal, (f: (Int,Int)) => first_tour(dim, f:: path))
+  } 
 }
-}
-
 /* Helper functions
 
 
