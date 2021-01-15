@@ -79,15 +79,6 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 //    In that case Return f(x), otherwise None. If possible,
 //    calculate f(x) only once.
 
-def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = {
-  if(xs == Nil) None
-  else{
-    val head = f(xs.head)
-    if (head.isDefined) head
-    else first(xs.tail,f)
-  }
-
-}  
 
 
 
